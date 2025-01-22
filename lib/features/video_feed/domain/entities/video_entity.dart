@@ -1,4 +1,3 @@
-import 'package:video_player/video_player.dart';
 
 class VideoEntity {
   String id;
@@ -9,8 +8,6 @@ class VideoEntity {
   String likes;
   String comments;
   String url;
-
-  VideoPlayerController? controller;
 
   VideoEntity(
       {required this.id,

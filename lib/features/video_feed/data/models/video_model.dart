@@ -1,5 +1,4 @@
 import 'package:tiktok_flutter/features/video_feed/domain/entities/video_entity.dart';
-import 'package:video_player/video_player.dart';
 
 class VideoModel extends VideoEntity {
 
@@ -11,9 +10,7 @@ class VideoModel extends VideoEntity {
       required super.songName,
       required super.likes,
       required super.comments,
-      required super.url}){
-   loadController();
-  }
+      required super.url});
 
   factory VideoModel.fromJson(Map<dynamic, dynamic> json){
     return VideoModel(
@@ -40,11 +37,5 @@ class VideoModel extends VideoEntity {
     data['comments'] = comments;
     data['url'] = url;
     return data;
-  }
-
-  Future<Null> loadController() async {
-    controller = VideoPlayerController.networkUrl(Uri.parse(url));
-    await controller?.initialize();
-    controller?.setLooping(true);
   }
 }

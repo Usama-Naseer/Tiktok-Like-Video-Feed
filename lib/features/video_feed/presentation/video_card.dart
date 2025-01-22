@@ -12,27 +12,43 @@ class VideoCard extends StatefulWidget {
   State<VideoCard> createState() => _VideoCardState();
 }
 
-class _VideoCardState extends State<VideoCard> {
+class _VideoCardState extends State<VideoCard> with WidgetsBindingObserver {
+  late VideoPlayerController controller;
+  @override
+  void initState() {
+     super.initState();
+     controller = VideoPlayerController.networkUrl(Uri.parse(widget.video.url));
+     controller.setLooping(true);
+     controller.initialize();
+     controller.addListener(() {
+       if (controller.value.isInitialized){
+         setState(() {
+           controller.play();
+         });
+       }
+     });
+  }
+
   @override
   Widget build(BuildContext context) {
     return Stack(
       children: [
-        widget.video.controller != null
+        controller.value.isInitialized
             ? GestureDetector(
                 onTap: () {
-                  if (widget.video.controller!.value.isPlaying) {
-                    widget.video.controller?.pause();
+                  if (controller.value.isPlaying) {
+                    controller.pause();
                   } else {
-                    widget.video.controller?.play();
+                    controller.play();
                   }
                 },
                 child: SizedBox.expand(
                     child: FittedBox(
                   fit: BoxFit.cover,
                   child: SizedBox(
-                    width: widget.video.controller?.value.size.width ?? 0,
-                    height: widget.video.controller?.value.size.height ?? 0,
-                    child: VideoPlayer(widget.video.controller!),
+                    width: controller.value.size.width,
+                    height: controller.value.size.height,
+                    child: VideoPlayer(controller),
                   ),
                 )),
               )
@@ -59,5 +75,18 @@ class _VideoCardState extends State<VideoCard> {
         ),
       ],
     );
+  }
+
+  @override
+  void didChangeAppLifecycleState(AppLifecycleState state) {
+    if (state == AppLifecycleState.paused) {
+      controller.pause();
+    }
+  }
+
+  @override
+  void dispose() {
+    super.dispose();
+    controller.dispose();
   }
 }
