@@ -17,7 +17,7 @@ class _VideoCardState extends State<VideoCard> with WidgetsBindingObserver {
   @override
   void initState() {
      super.initState();
-     controller = VideoPlayerController.networkUrl(Uri.parse(widget.video.url));
+     controller = VideoPlayerController.networkUrl(Uri.parse('https://flutter.github.io/assets-for-api-docs/assets/videos/bee.mp4'));
      controller.setLooping(true);
      controller.initialize();
      controller.addListener(() {
