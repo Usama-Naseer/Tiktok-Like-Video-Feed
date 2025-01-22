@@ -1,0 +1,29 @@
+{
+  "project_info": {
+    "project_number": "797907885817",
+    "project_id": "learn-fs5nik",
+    "storage_bucket": "learn-fs5nik.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:797907885817:android:75ca735bff2d397dc30c28",
+        "android_client_info": {
+          "package_name": "com.tiktok.task"
+        }
+      },
+      "oauth_client": [],
+      "api_key": [
+        {
+          "current_key": "AIzaSyB4GGL7zqYoZnHEa6yhBqxb8s_vtspaT8k"
+        }
+      ],
+      "services": {
+        "appinvite_service": {
+          "other_platform_oauth_client": []
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
