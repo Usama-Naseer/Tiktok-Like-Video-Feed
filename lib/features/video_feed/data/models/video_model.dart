@@ -11,7 +11,9 @@ class VideoModel extends VideoEntity {
       required super.songName,
       required super.likes,
       required super.comments,
-      required super.url});
+      required super.url}){
+   loadController();
+  }
 
   factory VideoModel.fromJson(Map<dynamic, dynamic> json){
     return VideoModel(

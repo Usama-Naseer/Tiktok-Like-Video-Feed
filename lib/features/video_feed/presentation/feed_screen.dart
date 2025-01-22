@@ -1,12 +1,9 @@
 import 'package:flutter/material.dart';
-import 'package:flutter/services.dart';
-import 'package:tiktok_flutter/features/video_feed/domain/entities/video_entity.dart';
-import 'package:tiktok_flutter/widgets/actions_toolbar.dart';
-import 'package:tiktok_flutter/widgets/video_description.dart';
-import 'package:get_it/get_it.dart';
-import 'package:video_player/video_player.dart';
-
-import '../data/source/remote/remote_videos_repository.dart';
+import 'package:tiktok_flutter/core/di/service_locator.dart';
+import 'package:tiktok_flutter/features/video_feed/domain/repositories/video_respository.dart';
+import 'package:tiktok_flutter/features/video_feed/presentation/bloc/video_feed_bloc.dart';
+import 'package:tiktok_flutter/features/video_feed/presentation/video_card.dart';
+import 'package:flutter_bloc/flutter_bloc.dart';
 
 class FeedScreen extends StatefulWidget {
   FeedScreen({Key? key}) : super(key: key);
@@ -16,83 +13,54 @@ class FeedScreen extends StatefulWidget {
 }
 
 class _FeedScreenState extends State<FeedScreen> {
-  final locator = GetIt.instance;
+  int prevVideo = 0;
+  int actualScreen = 0;
+  VideoFeedBloc bloc = VideoFeedBloc(locator<VideoRepository>());
+
   @override
   void initState() {
-    loadVideo(0);
-    loadVideo(1);
-
+    bloc.add(LoadVideos());
     super.initState();
   }
 
   @override
   Widget build(BuildContext context) {
     return Container(
-        child: Stack(
-      children: [
-        PageView.builder(
-          controller: PageController(
-            initialPage: 0,
-            viewportFraction: 1,
-          ),
-          itemCount: videoSource!.listVideos.length,
-          onPageChanged: (index) {
-            index = (videoSource!.listVideos.length);
-            changeVideo(index);
-          },
-          scrollDirection: Axis.vertical,
-          itemBuilder: (context, index) {
-            // index = index % (feedViewModel.videoSource!.listVideos.length);
-            return videoCard(videoSource!.listVideos[index]);
-          },
-        ),
-      ],
-    ));
-  }
-
-  Widget videoCard(VideoEntity video) {
-    return Stack(
-      children: [
-        video.controller != null
-            ? GestureDetector(
-                onTap: () {
-                  if (video.controller!.value.isPlaying) {
-                    video.controller?.pause();
-                  } else {
-                    video.controller?.play();
-                  }
-                },
-                child: SizedBox.expand(
-                    child: FittedBox(
-                  fit: BoxFit.cover,
-                  child: SizedBox(
-                    width: video.controller?.value.size.width ?? 0,
-                    height: video.controller?.value.size.height ?? 0,
-                    child: VideoPlayer(video.controller!),
-                  ),
-                )),
-              )
-            : Container(
-                color: Colors.red,
-                child: Center(
-                  child: Text("Loading"),
-                ),
+      color: Colors.white,
+      child: BlocConsumer(
+        bloc: bloc,
+        builder: (context, state) {
+          if(state is LoadingVideos){
+            return Center(child: CircularProgressIndicator());
+          }
+          else if(state is NoVideosFound){
+            return Center(child: Text('No videos found'));
+          }
+          else if(state is ErrorLoadingVideos){
+            return Center(child: Text('Error loading videos'));
+          }
+          return Container(
+            child: PageView.builder(
+              controller: PageController(
+                initialPage: 0,
+                viewportFraction: 1,
               ),
-        Column(
-          mainAxisAlignment: MainAxisAlignment.end,
-          children: <Widget>[
-            Row(
-              mainAxisSize: MainAxisSize.max,
-              crossAxisAlignment: CrossAxisAlignment.end,
-              children: <Widget>[
-                VideoDescription(video.user, video.videoTitle, video.songName),
-                ActionsToolbar(video.likes, video.comments, "https://www.andersonsobelcosmetic.com/wp-content/uploads/2018/09/chin-implant-vs-fillers-best-for-improving-profile-bellevue-washington-chin-surgery.jpg"),
-              ],
+              itemCount: bloc.videos.length,
+              onPageChanged: (index) {
+                changeVideo(index);
+              },
+              scrollDirection: Axis.vertical,
+              itemBuilder: (context, index) {
+                return VideoCard(
+                  video: bloc.videos[index],
+                );
+              },
             ),
-            SizedBox(height: 20)
-          ],
-        ),
-      ],
+
+          );
+        }, listener: (BuildContext context, state) {
+      },
+      ),
     );
   }
 
@@ -101,21 +69,15 @@ class _FeedScreenState extends State<FeedScreen> {
     super.dispose();
   }
 
-  VideoPlayerController? controller;
-  RemoteVideosRepository? videoSource = RemoteVideosRepository();
-
-  int prevVideo = 0;
-
-  int actualScreen = 0;
 
   changeVideo(index) async {
-    if (videoSource!.listVideos[index].controller == null) {
+    if (bloc.videos[index].controller == null) {
       // await videoSource!.listVideos[index].loadController();
     }
-    videoSource!.listVideos[index].controller!.play();
+    bloc.videos[index].controller!.play();
     //videoSource.listVideos[prevVideo].controller.removeListener(() {});
 
-    if (videoSource!.listVideos[prevVideo].controller != null) videoSource!.listVideos[prevVideo].controller!.pause();
+    if (bloc.videos[prevVideo].controller != null) bloc.videos[prevVideo].controller!.pause();
 
     prevVideo = index;
 
@@ -123,17 +85,8 @@ class _FeedScreenState extends State<FeedScreen> {
   }
 
   void loadVideo(int index) async {
-    if (videoSource!.listVideos.length > index) {
-      videoSource!.listVideos[index].controller?.play();
-    }
-  }
-
-  void setActualScreen(index) {
-    actualScreen = index;
-    if (index == 0) {
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.light);
-    } else {
-      SystemChrome.setSystemUIOverlayStyle(SystemUiOverlayStyle.dark);
+    if (bloc.videos.length > index) {
+      bloc.videos[index].controller?.play();
     }
   }
 }
