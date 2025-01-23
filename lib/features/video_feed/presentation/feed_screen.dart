@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:preload_page_view/preload_page_view.dart';
 import 'package:tiktok_flutter/core/di/service_locator.dart';
 import 'package:tiktok_flutter/features/video_feed/domain/repositories/video_respository.dart';
+import 'package:tiktok_flutter/features/video_feed/domain/usecases/get_videos.dart';
 import 'package:tiktok_flutter/features/video_feed/presentation/bloc/video_feed_bloc.dart';
 import 'package:tiktok_flutter/features/video_feed/presentation/video_card.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
@@ -16,7 +17,7 @@ class FeedScreen extends StatefulWidget {
 class _FeedScreenState extends State<FeedScreen> {
   int prevVideo = 0;
   int actualScreen = 0;
-  VideoFeedBloc bloc = VideoFeedBloc(locator<VideoRepository>());
+  VideoFeedBloc bloc = VideoFeedBloc(GetAllVideosUserCase(repository: locator<VideoRepository>()));
 
   @override
   void initState() {

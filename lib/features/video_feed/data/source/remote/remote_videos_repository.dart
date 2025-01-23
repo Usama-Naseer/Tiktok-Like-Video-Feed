@@ -1,29 +1,15 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:tiktok_flutter/dummy/demo_data.dart';
-import 'package:tiktok_flutter/features/video_feed/data/models/video_model.dart';
+import 'package:tiktok_flutter/features/video_feed/data/api_service/api_service.dart';
 import 'package:tiktok_flutter/features/video_feed/domain/entities/video_entity.dart';
 import 'package:tiktok_flutter/features/video_feed/domain/repositories/video_respository.dart';
 
 class RemoteVideosRepository implements VideoRepository {
-  Future<List<VideoEntity>> getVideoList() async {
+  ApiService apiService = ApiService();
+  Future<List<VideoEntity>> getVideoList(int page) async {
     try {
-      var data = await FirebaseFirestore.instance.collection("Videos").get();
-      var videoList = <VideoModel>[];
-      var videos;
-
-      if (data.docs.length == 0) {
-        await addDemoData();
-        videos = (await FirebaseFirestore.instance.collection("Videos").get());
-      } else {
-        videos = data;
-      }
-      videos.docs.forEach((element) async {
-        VideoModel video = VideoModel.fromJson(element.data());
-        // await video.loadController();
-        videoList.add(video);
-      });
-
-      return videoList;
+      final List<VideoEntity> videos = await apiService.loadVideos(page);
+      return videos;
     } catch (e) {
       rethrow;
     }

@@ -65,8 +65,8 @@ class _VideoCardState extends State<VideoCard> with WidgetsBindingObserver {
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.end,
               children: <Widget>[
-                VideoDescription(widget.video.user, widget.video.videoTitle, widget.video.songName),
-                ActionsToolbar(widget.video.likes, widget.video.comments,
+                VideoDescription(widget.video.user, widget.video.id, widget.video.videoUrl),
+                ActionsToolbar('0', '1',
                     "https://www.andersonsobelcosmetic.com/wp-content/uploads/2018/09/chin-implant-vs-fillers-best-for-improving-profile-bellevue-washington-chin-surgery.jpg"),
               ],
             ),

@@ -1,21 +1,31 @@
+// To parse this JSON data, do
+//
+//     final videoEntity = videoEntityFromJson(jsonString);
+
+
+import 'package:tiktok_flutter/features/video_feed/data/models/user_model.dart';
+import 'package:tiktok_flutter/features/video_feed/data/models/video_url_model.dart';
 
 class VideoEntity {
-  String id;
-  String user;
-  String userPic;
-  String videoTitle;
-  String songName;
-  String likes;
-  String comments;
+  int id;
+  int duration;
   String url;
+  String image;
+  UserModel user;
+  VideoUrlModel videoUrl;
+  String? file;
 
-  VideoEntity(
-      {required this.id,
-        required this.user,
-        required this.userPic,
-        required this.videoTitle,
-        required this.songName,
-        required this.likes,
-        required this.comments,
-        required this.url});
+  VideoEntity({
+    required this.id,
+    required this.duration,
+    required this.url,
+    required this.image,
+    required this.user,
+    required this.videoUrl,
+    this.file
+  });
+
 }
+
+
+
