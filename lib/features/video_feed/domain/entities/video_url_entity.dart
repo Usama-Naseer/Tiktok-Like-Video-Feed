@@ -2,9 +2,9 @@ class VideoUrlEntity{
   int id;
   String quality;
   String fileType;
-  int width;
-  int height;
-  int fps;
+  num width;
+  num height;
+  double fps;
   String link;
   int size;
 

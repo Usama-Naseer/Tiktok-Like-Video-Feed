@@ -7,15 +7,24 @@ class ApiService {
   Dio dio =  Dio();
 
   ApiService(){
-    dio.options.baseUrl = 'https://api.example.com';
     dio.interceptors.add(MyInterceptors());
   }
 
   Future<List<VideoModel>> loadVideos(int page) async {
-   Response response= await  dio.get('https://api.pexels.com/videos/popular?page=$page');
-    if(response.statusCode == 200){
-      return (response.data['video'] as List).map((e)=> VideoModel.fromJson(e)).toList();
-    } else {
+
+    try{
+      Response response= await  dio.get('https://api.pexels.com/videos/popular',queryParameters: {
+        'page': 1,
+        'per_page':10,
+      },options: Options(headers: {
+        'Authorization': 'HHCb9AN25uktaegwco9pUyArbyVYpwm8m5abIlkl6Gh1YXqyCzb9rWUL',
+      }));
+      if(response.statusCode == 200){
+        return (response.data['videos'] as List).map((e)=> VideoModel.fromJson(e)).toList();
+      } else {
+        throw Exception('Failed to load video');
+      }
+    }catch(e){
       throw Exception('Failed to load video');
     }
     

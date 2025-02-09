@@ -19,7 +19,7 @@ class VideoModel extends VideoEntity {
     url: json["url"],
     image: json["image"],
     user: UserModel.fromJson(json["user"]),
-    videoUrl: VideoUrlModel.fromJson(json["video_files"]),
+    videoUrl: VideoUrlModel.fromJson((json["video_files"] as List).where((e)=>(e['quality']=='sd')).firstOrNull),
   );
 
   Map<String, dynamic> toJson() => {
